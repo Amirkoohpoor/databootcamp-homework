@@ -86,3 +86,6 @@ def Station():
 
     return jsonify(all_station)
 
+if __name__ == "__main__":
+    app.run(debug=True)
+
