@@ -1,0 +1,68 @@
+Sub homeworktest()
+
+Dim firstprice As Double
+Dim lastprice As Double
+Dim change  As Double
+Dim percentchange As Double
+
+lastprice = 0
+change = 0
+
+Dim i As LongPtr
+
+Dim ticker_row As Integer
+ticker_row = 2
+
+Dim lastrow As Long
+
+Dim volume  As Variant
+
+volume = 0
+
+For s = 1 To ThisWorkbook.Sheets.Count
+ThisWorkbook.Sheets(s).Activate
+
+    lastrow = ThisWorkbook.Sheets(s).Cells(Rows.Count, 1).End(xlUp).Row
+    ThisWorkbook.Sheets(s).Range("I1").Value = "Ticker"
+    ThisWorkbook.Sheets(s).Range("J1").Value = "Yearly Change"
+    ThisWorkbook.Sheets(s).Range("K1").Value = "Percent Change"
+    ThisWorkbook.Sheets(s).Range("L1").Value = "Total Stock Volume"
+    ThisWorkbook.Sheets(s).Range("O2").Value = "Greatest % Increase"
+    ThisWorkbook.Sheets(s).Range("O3").Value = "Greatest % decrease"
+    ThisWorkbook.Sheets(s).Range("O4").Value = "Greatest Total Volume"
+    ThisWorkbook.Sheets(s).Range("P1").Value = "Ticker"
+    ThisWorkbook.Sheets(s).Range("Q1").Value = "Value"
+    ThisWorkbook.Sheets(s).Range("I1:Q1").Columns.AutoFit
+    ThisWorkbook.Sheets(s).Range("O:O").Columns.AutoFit
+    firstprice = ThisWorkbook.Sheets(s).Cells(2, 3).Value
+    
+    For i = 2 To lastrow
+        If ThisWorkbook.Sheets(s).Cells(i, 1).Value <> ThisWorkbook.Sheets(s).Cells(i + 1, 1).Value Then
+            ThisWorkbook.Sheets(s).Cells(ticker_row, 9).Value = ThisWorkbook.Sheets(s).Cells(i, 1).Value
+            volume = volume + ThisWorkbook.Sheets(s).Cells(i, 7).Value
+            lastprice = ThisWorkbook.Sheets(s).Cells(i, 6).Value
+            change = lastprice - firstprice
+            ThisWorkbook.Sheets(s).Cells(ticker_row, 10).Value = change
+            If change > 0 Then ThisWorkbook.Sheets(s).Cells(ticker_row, 10).Interior.ColorIndex = 4
+            If change < 0 Then ThisWorkbook.Sheets(s).Cells(ticker_row, 10).Interior.ColorIndex = 3
+            If firstprice = 0 Then Exit For
+            percentchange = (change / firstprice)
+            ThisWorkbook.Sheets(s).Cells(ticker_row, 11).Value = FormatPercent(percentchange, 2)
+            firstprice = ThisWorkbook.Sheets(s).Cells(i + 1, 3).Value
+            ThisWorkbook.Sheets(s).Cells(ticker_row, 12).Value = volume
+            ticker_row = ticker_row + 1
+            percentchange = 0
+            change = 0
+            volume = 0
+        Else
+            volume = volume + ThisWorkbook.Sheets(s).Cells(i, 7).Value
+        End If
+    Next i
+    ticker_row = 2
+    change = 0
+Next s
+End Sub
+
+
+
+
